@@ -1,3 +1,4 @@
 # Đây là bài tập môn phát triển ứng ựng trường đại học công nghiệp của nhóm Unity. Dưới đây là mô tả về code và hướng dẫn sử dụng
-Trong file này có chứa code của ứng dụng và file cơ sở dữ liệu được luw dưới dạng file sql có tên là new_unity (tên cơ sở dữ liệu) được lưu trong thư mục CSDL. \n
+Trong file này có chứa code của ứng dụng và file cơ sở dữ liệu được luw dưới dạng file sql có tên là new_unity (tên cơ sở dữ liệu) được lưu trong thư mục CSDL. 
+	
 Thú hai 2 thư mục FileSaver.js và dompdf, hỗ trợ cho chức năng xuất file dưới dạng pdf và excel, không thể trực tiếp đưa lên đây do năng. Nếu muốn sử dụng bạn có thể lên google tìm và tải về 2 thư mục này, còn không thì nó cũng không ảnh hưởng tới các chức năng khác của hệ thống.
