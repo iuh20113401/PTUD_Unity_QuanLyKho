@@ -2,6 +2,32 @@
     include_once("../model/phieuXuatKho.php");
     class ControlPhieuXuat{
         // cho chức năng phân phối nhập kho
+         function layToanBoPhieuXuat($maKho){
+            $p = new PhieuXuat();
+            $res = $p->layToanBoPhieuXuat(null,$maKho);
+            if (!$res) {
+                return false;
+            } else {
+                if (count($res) == 0) {
+                    return 0;
+                } else {
+                    return $res;
+                }
+            }
+        }
+        function layToanBoPhieuXuatTheoTaiKhoan($maTaiKhoan){
+            $p = new PhieuXuat();
+            $res = $p->layToanBoPhieuXuat($maTaiKhoan);
+            if (!$res) {
+                return false;
+            } else {
+                if (count($res) == 0) {
+                    return 0;
+                } else {
+                    return $res;
+                }
+            }
+        }
         function lapPhieuXuat($maPhieu,$maDon ,$maKho, $maTaiKhoan, $ngayLap, $ngayXuat,$trangThai){
              $p = new PhieuXuat();
              $res = $p->lapPhieuXuat($maPhieu,$maDon ,$maKho, $maTaiKhoan, $ngayLap, $ngayXuat,$trangThai);

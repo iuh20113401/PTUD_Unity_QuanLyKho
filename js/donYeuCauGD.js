@@ -28,6 +28,7 @@ async function capNhatTrangThaiDonYeuCau(maDon, trangThai, loai) {
   return data;
 }
 let dsDon;
+let dsDonSuDung;
 function render(chiTietNguyenLieu = null, trangThai = null) {
   let html =
     chiTietNguyenLieu !== null
@@ -54,12 +55,24 @@ function content(trangThai = null) {
               <option value="Đã duyệt" ${
                 trangThai == "Đã duyệt" ? `selected` : ""
               }>Đã duyệt</option>
+              <option value="Đã phân phối" ${
+                trangThai == "Đã phân phối" ? `selected` : ""
+              }>Đã phân phối</option>
+                <option value="Đã nhập kho" ${
+                  trangThai == "Đã nhập kho" ? `selected` : ""
+                }>Đã nhập kho</option>
+                <option value="Đã xuất kho" ${
+                  trangThai == "Đã xuất kho" ? `selected` : ""
+                }>Đã xuất kho</option>
+                <option value="Lập biên bản" ${
+                  trangThai == "Lập biên bản" ? `selected` : ""
+                }>Lập biên bản</option>
               <option value="Đã hủy" ${
                 trangThai == "Đã hủy" ? `selected` : ""
               }>Đã hủy</option>
             </select>
             <div class ='inputGroup'>
-            <input type="text" name="search" id="search">
+            <input type="text" name="search" id="search" placeholder = "Nhập mã đơn muốn tìm">
             <button type="button"><i class="fa-solid fa-magnifying-glass" style="color: #1e5cc8;"></i></button>
             </div>
           </form>
@@ -77,7 +90,7 @@ function content(trangThai = null) {
                 <th>Hành động</th>
               </tr>
               
-              ${dsDon
+              ${dsDonSuDung
                 .map((don) => {
                   return `<tr>
                 <td>${don.MaDon}</td>
@@ -137,6 +150,15 @@ function contentChiTiet(chiTiet) {
               <option value="Đã duyệt" ${
                 trangThai == "Đã duyệt" ? `selected` : ""
               }>Đã duyệt</option>
+              <option value="Đã phân phối" ${
+                trangThai == "Đã phân phối" ? `selected` : ""
+              }>Đã phân phối</option>
+                <option value="Đã nhập kho" ${
+                  trangThai == "Đã nhập kho" ? `selected` : ""
+                }>Đã nhập kho</option>
+                <option value="Đã xuất kho" ${
+                  trangThai == "Đã xuất kho" ? `selected` : ""
+                }>Đã xuất kho</option>
               <option value="Đã hủy" ${
                 trangThai == "Đã hủy" ? `selected` : ""
               }>Đã hủy</option>
@@ -224,9 +246,46 @@ function goBack() {
   const selectValue = document.querySelector("select").value;
   return selectValue;
 }
+let timeOut_2;
+function getSearch(value = null) {
+  const search = document.querySelector("#search");
+  search.value = value ? value : "";
+  search.addEventListener("input", (e) => {
+    stopTimeOut();
+    timeOut_2 = setTimeout(async (e) => {
+      await renderSearch(+search.value);
+    }, 500);
+  });
+  let formSearch = document.querySelector(".search");
+  formSearch.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    await renderSearch(+search.value);
+    stopTimeOut();
+  });
+}
+function stopTimeOut() {
+  clearTimeout(timeOut_2);
+}
+async function renderSearch(id) {
+  dsDonSuDung = id == "" ? dsDon : dsDon.filter((pn) => pn.MaDon == id);
+  const contentMoi = document.querySelector(".content");
+  let html = content();
+  const placeholder = document.createElement("div");
+  placeholder.insertAdjacentHTML("afterbegin", html);
+  const node = placeholder.firstElementChild;
+  const container = document.querySelector(".container");
+  container.replaceChild(node, contentMoi);
+  getSearch(id);
+  await themListener("");
+}
 async function init(dsDonMoi, trangThai = null) {
   dsDon = dsDonMoi ? dsDonMoi : await layDonYeuCau();
+  dsDonSuDung = dsDon;
   render(null, trangThai);
+  await themListener();
+  getSearch();
+}
+async function themListener() {
   const btnXem = document.querySelectorAll("button");
 
   btnXem.forEach((e) =>

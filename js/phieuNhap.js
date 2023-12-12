@@ -1,6 +1,12 @@
 import { toExcel, toPDF, getFetch } from "./helper.js";
 import { menu, menuShow, highLightMenu } from "./menu.js";
 
+async function layToanBoPhieuNhap() {
+  const data = await getFetch("../ajax/nhapKho.php", {
+    action: "layToanBoPhieuNhapTheoTaiKhoan",
+  });
+  return data;
+}
 async function layPhieuNhapKhoChoNhap() {
   const data = await getFetch("../ajax/nhapKho.php", {
     action: "layPhieuNhapKhoChoNhapQuanLy",
@@ -26,7 +32,6 @@ let dsPhieuNhap;
 let dsPhieuNhapSuDung;
 function render(chiTietNguyenLieu = null, thanhPham, loai = "Don") {
   let html;
-
   html =
     chiTietNguyenLieu !== null
       ? contentChiTietPhieuNhap(chiTietNguyenLieu, thanhPham)
@@ -46,11 +51,12 @@ function contentPhieuNhap() {
          <a href="#"> <h3>Phiếu nhập</h3></a>
           <form class="search">
             <select class ='loai'>
+              <option value =''>Toàn bộ</option>
               <option value ='1'>Chờ nhập</option>
               <option value ='2'>Đã nhập</option>
             </select>
             <div class ='inputGroup'>
-            <input type="text" name="search" id="search">
+            <input type="text" name="search" id="search" placeholder ="Nhập mã đơn yêu cầu">
             <button type="button"><i class="fa-solid fa-magnifying-glass" style="color: #1e5cc8;"></i></button>
             </div>
           </form>
@@ -73,7 +79,7 @@ function contentPhieuNhap() {
                 <td>${phieu.MaPhieu}</td>
                 <td>${phieu.MaDon}</td>
                 <td>${phieu.TenLoai}</td>
-                <td>${phieu.MaTaiKhoan}</td>
+                <td>${phieu.TenDangNhap}</td>
                 <td>${phieu.NgayLap}</td>
                 <td class="center">${phieu.soluongnguyenlieu}</td>
                 <td><button class="btn primary center large xem" id = ${phieu.MaPhieu}>Xem</button></td>
@@ -119,7 +125,7 @@ function contentChiTietPhieuNhap(chiTiet) {
             <h3>${chiTiet.TenLoai}</h3>
             <p><span class="deMuc">Mã đơn:</span>${chiTiet.MaDon}</p>
             <p><span class="deMuc">Tên đơn:</span>${chiTiet.TenLoai}</p>
-            <p><span class="deMuc">Người lập:</span>${chiTiet.MaTaiKhoan}</p>
+            <p><span class="deMuc">Người lập:</span>${chiTiet.TenDangNhap}</p>
             <p><span class="deMuc">Ngày lập:</span>${chiTiet.NgayLap}</p>
             <p><span class="deMuc">Trạng thái:</span>${chiTiet.TrangThai}</p>
             <p><span class="deMuc">Danh sách yêu cầu:</span></p>
@@ -144,13 +150,19 @@ async function renderChiTietPhieuNhap(id) {
   toExcel(chitiet.TenLoai);
   toPDF(chitiet.TenLoai);
 }
-async function initPhieuNhap(selectValue = 1) {
+async function initPhieuNhap(selectValue = "") {
   dsPhieuNhap =
-    selectValue == 1
+    selectValue == ""
+      ? await layToanBoPhieuNhap()
+      : selectValue == "1"
       ? await layPhieuNhapKhoChoNhap()
       : await layPhieuNhapKhoDaNhap();
   dsPhieuNhapSuDung = dsPhieuNhap;
   render(null, false);
+  await themListener(selectValue);
+  getSearch();
+}
+async function themListener(selectValue) {
   const btnXem = document.querySelectorAll(".xem");
   btnXem.forEach((e) =>
     e.addEventListener("click", (e) => {
@@ -164,7 +176,6 @@ async function initPhieuNhap(selectValue = 1) {
     await initPhieuNhap(select.value);
     console.log(select.value);
   });
-  getSearch();
 }
 let timeOut_2;
 function getSearch(value = null) {
@@ -172,21 +183,21 @@ function getSearch(value = null) {
   search.value = value ? value : "";
   search.addEventListener("input", (e) => {
     stopTimeOut();
-    timeOut_2 = setTimeout((e) => {
-      renderSearch(+search.value);
+    timeOut_2 = setTimeout(async (e) => {
+      await renderSearch(+search.value);
     }, 500);
   });
   let formSearch = document.querySelector(".search");
-  formSearch.addEventListener("submit", (e) => {
+  formSearch.addEventListener("submit", async (e) => {
     e.preventDefault();
-    renderSearch(+search.value);
+    await renderSearch(+search.value);
     stopTimeOut();
   });
 }
 function stopTimeOut() {
   clearTimeout(timeOut_2);
 }
-function renderSearch(id) {
+async function renderSearch(id) {
   dsPhieuNhapSuDung =
     id == "" ? dsPhieuNhap : dsPhieuNhap.filter((pn) => pn.MaDon == id);
   const content = document.querySelector(".content");
@@ -197,6 +208,7 @@ function renderSearch(id) {
   const container = document.querySelector(".container");
   container.replaceChild(node, content);
   getSearch(id);
+  await themListener("");
 }
 async function layPhieuNhap(id) {
   const chiTiet = dsPhieuNhap.filter((e) => e.MaPhieu == id)[0];

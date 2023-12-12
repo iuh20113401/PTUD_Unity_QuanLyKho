@@ -1,5 +1,11 @@
 import { toExcel, toPDF, getFetch, taiKhoan } from "./helper.js";
 import { menu, menuShow, highLightMenu } from "./menu.js";
+async function layToanBoPhieuXuatTheoTaiKhoan() {
+  const data = await getFetch("../ajax/xuatKho.php", {
+    action: "layToanBoPhieuXuatTheoTaiKhoan",
+  });
+  return data;
+}
 async function layPhieuXuatKhoChoXuatTheoTaiKhoan() {
   const data = await getFetch("../ajax/xuatKho.php", {
     action: "layPhieuXuatKhoChoXuatQuanLy",
@@ -42,6 +48,7 @@ function contentPhieuXuat() {
          <a href="#"> <h3>Phiếu xuất</h3></a>
           <form class="search">
           <select>
+            <option value = '' >Toàn bộ</option>
             <option value = 1 >Chờ xuất</option>
             <option value = 2 >Đã xuất</option>
         </select>
@@ -147,9 +154,11 @@ async function renderChiTietPhieuXuat(id) {
   toPDF(chitiet.TenLoai);
 }
 
-async function initPhieuXuat(selectValue = 1) {
+async function initPhieuXuat(selectValue = "") {
   dsPhieuXuat =
-    selectValue == 1
+    selectValue == ""
+      ? await layToanBoPhieuXuatTheoTaiKhoan()
+      : selectValue == 1
       ? await layPhieuXuatKhoChoXuatTheoTaiKhoan()
       : await layPhieuXuatKhoDaXuatTheoTaiKhoan();
   render(null, false);

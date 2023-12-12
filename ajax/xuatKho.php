@@ -14,6 +14,12 @@ session_start();
         if ($action == "layPhieuXuatKhoChoXuatQuanLy") {
             $maTaiKhoan = $_SESSION['maTaiKhoan'];
         }
+        if ($action == "layToanBoPhieuXuatTheoKho") {
+            $maKho = $_POST['maKho'];
+        }
+        if ($action == "layToanBoPhieuXuatTheoTaiKhoan") {
+            $maTaiKhoan = $_SESSION['maTaiKhoan'];
+        }
         if ($action == "layPhieuXuatKhoDaXuatQuanLy") {
             $maTaiKhoan = $_SESSION['maTaiKhoan'];
         }
@@ -26,6 +32,12 @@ session_start();
             $ngayXuat = date('Y-m-d');
         }
         switch ($action) { 
+            case "layToanBoPhieuXuatTheoKho":
+                layToanBoPhieuNhapTheoKho($maKho);
+                break;
+            case "layToanBoPhieuXuatTheoTaiKhoan":
+                layToanBoPhieuXuatTheoTaiKhoan($maTaiKhoan);
+                break;
             case "layPhieuXuatKhoChoXuat":
                 layPhieuXuatKhoChoXuatTheoKho($maKho);
                 break;
@@ -60,6 +72,16 @@ session_start();
     function layPhieuXuatKhoDaXuatTheoTaiKhoan($maTaiKhoan){
         $p = new ControlPhieuXuat(); 
         $res = $p->layPhieuXuatKhoDaXuatTheoTaiKhoan($maTaiKhoan);
+        echo json_encode($res);
+    }
+    function layToanBoPhieuXuatTheoKho($maKho){
+        $p = new ControlPhieuXuat(); 
+        $res = $p->layToanBoPhieuXuat($maKho);
+        echo json_encode($res);
+    }
+    function layToanBoPhieuXuatTheoTaiKhoan($maTaiKhoan){
+        $p = new ControlPhieuXuat(); 
+        $res = $p->layToanBoPhieuXuatTheoTaiKhoan($maTaiKhoan);
         echo json_encode($res);
     }
     function layPhieuXuatKhoChoXuatTheoTaiKhoan($maTaiKhoan){

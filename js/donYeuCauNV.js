@@ -46,13 +46,25 @@ function content(trangThai = null) {
          <a href="#"> <h3>Đơn yêu cầu</h3></a>
           <form class="search" value = ${trangThai} >
             <select >
-              <option value="" }>Toàn bộ</option>
+              <option >Toàn bộ</option>
               <option value="Chờ duyệt" ${
                 trangThai == "Chờ duyệt" ? `selected` : ""
               }>Chờ duyệt</option>
               <option value="Đã duyệt" ${
                 trangThai == "Đã duyệt" ? `selected` : ""
               }>Đã duyệt</option>
+              <option value="Đã phân phối" ${
+                trangThai == "Đã phân phối" ? `selected` : ""
+              }>Đã phân phối</option>
+                <option value="Đã nhập kho" ${
+                  trangThai == "Đã nhập kho" ? `selected` : ""
+                }>Đã nhập kho</option>
+                <option value="Đã xuất kho" ${
+                  trangThai == "Đã xuất kho" ? `selected` : ""
+                }>Đã xuất kho</option>
+                <option value="Lập biên bản" ${
+                  trangThai == "Lập biên bản" ? `selected` : ""
+                }>Lập biên bản</option>
               <option value="Đã hủy" ${
                 trangThai == "Đã hủy" ? `selected` : ""
               }>Đã hủy</option>

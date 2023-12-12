@@ -34,62 +34,35 @@ let colors = [
   "rgb(54, 162, 235)", // Xanh dương nhạt
   "rgb(75, 192, 192)", // Xanh lá nhạt
 ];
-let myPieChart;
-let myLineChart;
-let mybarChart;
-function render(ma = 1) {
-  let html = content(ma);
-  html = `${menu()}
-      ${html}
-      `;
+let myPieChart = false;
+let myLineChart = false;
+let myPieChart2 = false;
+let mybarChart = false;
+function render() {
+  let html = `${menu()}`;
   let container = document.querySelector(".container");
-  container.innerHTML = html;
+  container.insertAdjacentHTML("afterbegin", html);
   menuShow();
   highLightMenu();
-  if (data?.length) {
-    let pieChartTop10 = document.querySelector("#top10").getContext("2d");
-    let barChart = document.querySelector(".barChart").getContext("2d");
-    let lineChart = document.querySelector(".lineChart").getContext("2d");
-    myPieChart = pieChartVisual(pieChartTop10);
-    mybarChart = barChartVisual(barChart);
-    myLineChart = lineChartVisual(lineChart);
-  }
 }
-function content(ma) {
-  return `<div class="content">
-        <h2>Xin chào, mừng bạn trở lại</h2>
-        <div class="content__inner">
-          <div class="data">
-            <select name="" id="tieuchi">
-              <option value="1" ${
-                ma === 1 ? "selected" : ""
-              }>Nguyên liệu</option>
-              <option value="2" ${
-                ma !== 1 ? "selected" : ""
-              }>Thành phẩm</option>
-              <!-- tổng số lượng tồn, toàn bộ san phẩm theo số lượng (pie), top 10 số lượng lớn nhất (bar), số lượng chờ xuất và số lượng chờ nhập (pie) -->
-              <option value="">Nguyên liệu chờ nhập</option>
-              <option value="">Nguyên liệu đã nhập</option>
-              <option value="">Nguyên liệu chờ xuất</option>
-              <option value="">Nguyên liệu đã xuất</option>
-              <option value="">Đơn yêu cầu</option>
-            </select>
-          </div>
-          <div class="charts">
-            <canvas class="pieChart" id="top10"></canvas>
-            <canvas class="barChart"></canvas>
-            <canvas class="lineChart"></canvas>
-          </div>
-        </div>
-      </div>`;
+function content() {
+  const pieChart = document.querySelector(".pieChart").getContext("2d");
+  myPieChart = pieChartVisual(pieChart);
+  const pieChart2 = document.querySelector(".pieChart2").getContext("2d");
+  myPieChart2 = pieChartNhapXuatVisual(pieChart2);
+  const barChart = document.querySelector(".barChart").getContext("2d");
+  mybarChart = barChartVisual(barChart);
+  const lineChart = document.querySelector(".lineChart").getContext("2d");
+  myLineChart = lineChartVisual(lineChart);
 }
 
 function barChartVisual(ctx) {
+  let top10 = dsUniqueSP.slice(0, 10);
   const data = {
-    labels: dsUniqueSP.map((d) => d.TenSanPham),
+    labels: top10.map((d) => d.TenSanPham),
     datasets: [
       {
-        data: dsUniqueSP.map((d) => d.SoLuongTon),
+        data: top10.map((d) => d.SoLuongTon),
         backgroundColor: colors,
         hoverOffset: 4,
       },
@@ -100,8 +73,7 @@ function barChartVisual(ctx) {
     type: "bar",
     data: data,
     options: {
-      responsive: false,
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
       plugins: {
         legend: {
           display: false,
@@ -114,7 +86,7 @@ function barChartVisual(ctx) {
       },
     },
   };
-  if (myLineChart) {
+  if (mybarChart) {
     mybarChart.destroy();
   }
   const myChart = new Chart(ctx, config);
@@ -137,8 +109,9 @@ function pieChartVisual(ctx) {
     type: "pie",
     data: data,
     options: {
-      responsive: false,
+      responsive: true,
       maintainAspectRatio: false,
+
       plugins: {
         legend: {
           display: true,
@@ -146,13 +119,53 @@ function pieChartVisual(ctx) {
         },
         title: {
           display: true,
-          text: "Top 10 sản phẩm có số lượng tồn lớn nhất",
+          text: "Danh sách sản phẩm trong kho",
         },
       },
     },
   };
-  if (myLineChart) {
+  if (myPieChart) {
     myPieChart.destroy();
+  }
+  const myChart = new Chart(ctx, config);
+  return myChart;
+}
+function pieChartNhapXuatVisual(ctx) {
+  let SoLuongChoNhap = dsUniqueSP.reduce((acc, d) => acc + d.SoLuongChoNhap, 0);
+  let SoLuongChoXuat = dsUniqueSP.reduce((acc, d) => acc + d.SoLuongChoXuat, 0);
+  console.log(SoLuongChoNhap, SoLuongChoXuat);
+  const data = {
+    labels: ["Số lường chờ xuất", "Số lượng chờ nhập"],
+    datasets: [
+      {
+        data: [SoLuongChoXuat, SoLuongChoNhap], // Dữ liệu biểu thị cho mỗi phần của pie chart
+        backgroundColor: colors,
+        hoverOffset: 4, // Khoảng cách khi hover chuột lên phần tử của biểu đồ
+      },
+    ],
+  };
+
+  const config = {
+    type: "pie",
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          display: true,
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "Nguyên liệu chờ nhập và xuất",
+        },
+      },
+    },
+  };
+  if (myPieChart2) {
+    myPieChart2.destroy();
   }
   const myChart = new Chart(ctx, config);
 
@@ -169,6 +182,7 @@ function lineChartVisual(ctx) {
         hoverOffset: 4,
         tension: 0.1,
         fill: false,
+        borderWidth: 1,
       },
     ],
   };
@@ -177,8 +191,22 @@ function lineChartVisual(ctx) {
     type: "line",
     data: data,
     options: {
+      borderColor: "red",
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+        y: {
+          ticks: {
+            // Include a dollar sign in the ticks
+            callback: function (value, index, ticks) {
+              return " " + value;
+            },
+          },
+        },
+      },
+      maintainAspectRatio: true,
       responsive: true,
-      maintainAspectRatio: false,
       plugins: {
         legend: {
           display: false,
@@ -195,14 +223,13 @@ function lineChartVisual(ctx) {
     myLineChart.destroy();
   }
   const myChart = new Chart(ctx, config);
-  Chart.defaults.font.size = 16;
   return myChart;
 }
+
 async function init(ma = 1) {
   data = ma === 1 ? await nguyenLieu() : await thanhPham();
   if (data) trichXuatData(data);
-  console.log(data);
-  render(ma);
+  content();
   const select = document.querySelector("select");
   select.addEventListener("change", (e) => {
     changeSelect();
@@ -216,16 +243,14 @@ function trichXuatData(data) {
     return {
       TenSanPham: uSP,
       SoLuongTon: ds[0].SoLuongTon,
-      SoLuongChoXuat: ds[0].SoLuongChoNhap,
-      SoLuongChoNhap: ds[0].SoLuongChoXuat,
+      SoLuongChoXuat: ds[0].SoLuongChoXuat,
+      SoLuongChoNhap: ds[0].SoLuongChoNhap,
     };
   });
-  dsUniqueSP = dsUniqueSP
-    .sort((a, b) => b.SoLuongTon - a.SoLuongTon)
-    .splice(0, 10);
-  dsNhap = [...new Set(data.map((d) => d.NgayNhap))];
+  dsUniqueSP = dsUniqueSP.sort((a, b) => b.SoLuongTon - a.SoLuongTon);
+  dsNhap = [...new Set(data.map((d) => d.NgayLap))];
   dsNhap = dsNhap.map((nn) => {
-    let ds = data.filter((d) => d.NgayNhap === nn);
+    let ds = data.filter((d) => d.NgayLap === nn);
     return {
       NgayNhap: nn,
       SoLuong: ds.reduce((acc, d) => acc + d.SoLuong, 0),
@@ -234,11 +259,11 @@ function trichXuatData(data) {
 }
 async function changeSelect() {
   const selectValue = document.querySelector("select").value;
-
   if (selectValue == 1) {
     await init(1);
   } else {
     await init(2);
   }
 }
+render();
 await init(1);

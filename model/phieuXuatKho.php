@@ -8,7 +8,21 @@ class PhieuXuat{
         $p = new KetNoi();
         $p->ketNoi($this->conn);
     }
-
+    function layToanBoPhieuXuat($maTaiKhoan = null,$maKho = null){
+        if($maTaiKhoan != null){
+            $query = "CALL layToanBoPhieuXuat(:maTaiKhoan, '')";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":maTaiKhoan", $maTaiKhoan);
+        }
+        if($maKho != null){
+            $query = "CALL layToanBoPhieuXuat('', :maKho)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":maKho", $maKho);
+        }
+        $stmt->execute();
+        $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $menuItems ?: false;
+    }
     function layPhieuXuatKhoChoXuat($maTaiKhoan = null,$maKho = null){
         if($maTaiKhoan != null){
             $query = "CALL layPhieuXuatKhoTheoKho(:maTaiKhoan, '', 'Chờ xuất')";

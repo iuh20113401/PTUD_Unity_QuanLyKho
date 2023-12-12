@@ -14,9 +14,39 @@
     <link rel="stylesheet" href="../css/button.css" />
     <link rel="stylesheet" href="../css/lapdonyeucau.css" />
     <link rel="stylesheet" href="../css/lapBaoCao.css" />
+    <script type="module" defer src="../js/lapBaoCao.js" defer></script>
   </head>
   <body>
-    <div class="container"></div>
+    <div class="container">
+      <div class="content">
+        <h2>Xin chào, mừng bạn trở lại</h2>
+        <div class="content__inner">
+          <div class="data">
+            <select name="" id="tieuchi">
+              <option value="1">Nguyên liệu</option>
+              <option value="2">Thành phẩm</option>
+            </select>
+          </div>
+          <div class="graphBox">
+            <div class="top">
+              <div class="box">
+                <canvas class="pieChart" id="top10"></canvas>
+              </div>
+              <div class="box">
+                <canvas class="barChart" id="top10"></canvas>
+              </div>
+            </div>
+            <div class="bottomGraph">
+              <div class="box">
+                <canvas class="lineChart" id="top10"></canvas>
+              </div>
+              <div class="box">
+                <canvas class="pieChart2" id="top10"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
-  <script type="module" defer src="../js/lapBaoCao.js" defer></script>
 </html>

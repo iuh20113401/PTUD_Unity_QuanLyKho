@@ -9,6 +9,10 @@
   box-sizing: border-box;
   overflow-y: scroll;
 }
+.container::-webkit-scrollbar {
+  display: none;
+}
+
 .menu {
   width: 20%;
   height: 100%;

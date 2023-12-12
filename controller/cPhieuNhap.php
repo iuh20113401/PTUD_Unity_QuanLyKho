@@ -52,6 +52,32 @@
                 }
             }
         }
+        function layToanBoPhieuNhap($maKho){
+            $p = new PhieuNhap();
+            $res = $p->layToanBoPhieuNhap(null,$maKho);
+            if (!$res) {
+                return false;
+            } else {
+                if (count($res) == 0) {
+                    return 0;
+                } else {
+                    return $res;
+                }
+            }
+        }
+        function layToanBoPhieuNhapTheoTaiKhoan($maTaiKhoan){
+            $p = new PhieuNhap();
+            $res = $p->layToanBoPhieuNhap($maTaiKhoan);
+            if (!$res) {
+                return false;
+            } else {
+                if (count($res) == 0) {
+                    return 0;
+                } else {
+                    return $res;
+                }
+            }
+        }
         function layPhieuNhapKhoChoNhapTheoTaiKhoan($maTaiKhoan){
             $p = new PhieuNhap();
             $res = $p->layPhieuNhapKhoChoNhap($maTaiKhoan);

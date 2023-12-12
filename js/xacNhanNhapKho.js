@@ -29,7 +29,6 @@ async function xacNhanNhapKho(phieu) {
     ngaySanXuat: phieu.NguyenLieu.map((nl) => nl.NgaySanXuat),
     ngayHetHan: phieu.NguyenLieu.map((nl) => nl.NgayHetHan),
   });
-  console.log(data);
   return data;
 }
 function render(chiTietNguyenLieu = null) {
