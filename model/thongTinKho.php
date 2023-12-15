@@ -10,7 +10,7 @@ class Kho{
     }
 
     function layKhoPhuHop($loai, $soLuong){
-        $stmt = $this->conn->prepare("SELECT * FROM kho WHERE loai = :loai AND SucChua - SucChuaDaDung > :soLuong");
+        $stmt = $this->conn->prepare("SELECT * FROM kho WHERE loai = :loai AND SucChua - SucChuaDaDung >= :soLuong");
         $stmt->bindParam(':loai', $loai, PDO::PARAM_STR);
         $stmt->bindParam(':soLuong', $soLuong, PDO::PARAM_INT);
         $stmt->execute();

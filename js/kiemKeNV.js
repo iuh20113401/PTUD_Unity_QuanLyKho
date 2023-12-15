@@ -213,7 +213,7 @@ async function contentChiTiet(chiTiet) {
           </button>
         </form>
         <div class="content__inner chitiet">
-          <h3>Lập biên bản kiểm kê</h3>
+          <h3>Biên bản kiểm kê</h3>
           <p><span class="deMuc">Mã biên bản:</span>${chiTiet.MaKiemKe}</p>
           <p><span class="deMuc">Người lập:</span>${chiTiet.TenDangNhap}</p>
           <p><span class="deMuc">Ngày lập:</span>${chiTiet.NgayLap}</p>
@@ -334,7 +334,7 @@ async function contentDonLoi(chiTiet) {
           </button>
         </form>
         <div class="content__inner chitiet">
-          <h3>Lập biên bản kiểm kê</h3>
+          <h3>Biên bản kiểm kê</h3>
           <p><span class="deMuc">Mã biên bản:</span>${chiTiet.MaKiemKe}</p>
           <p><span class="deMuc">Người lập:</span>${chiTiet.TenDangNhap}</p>
           <p><span class="deMuc">Ngày lập:</span>${chiTiet.NgayLap}</p>
@@ -570,7 +570,7 @@ function contentKiemKe(chiTiet) {
           </button>
         </form>
         <div class="content__inner chitiet">
-          <h3>Lập biên bản kiểm kê</h3>
+          <h3>Biên bản kiểm kê</h3>
           <p><span class="deMuc">Mã biên bản:</span>${chiTiet.MaKiemKe}</p>
           <p><span class="deMuc">Người lập:</span>${chiTiet.TenDangNhap}</p>
           <p><span class="deMuc">Ngày lập:</span>${chiTiet.NgayLap}</p>

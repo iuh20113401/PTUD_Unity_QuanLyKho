@@ -259,7 +259,7 @@ function contentBienBan(maBienBan, chitiet) {
         <div class="contentBienBan">
             <h3>Lập biên bản</h3>
             <div class='inputInfo--flat mt-1'>
-                <label for='maBienBan'>Mã đơn:</label>
+                <label for='maBienBan'>Mã biên bản:</label>
                 <input type='number' value =${maBienBan} readonly/>
             </div>
             <div class='inputInfo--flat mt-1'>

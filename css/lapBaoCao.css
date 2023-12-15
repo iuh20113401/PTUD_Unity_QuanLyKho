@@ -19,6 +19,25 @@
   position: relative;
   width: 97%;
 }
+.graphBox > .numbers {
+  position: relative;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  grid-gap: 2rem;
+  min-height: 100px;
+  box-sizing: border-box;
+}
+.graphBox > .numbers > .box {
+  margin-left: 20px;
+  min-height: 100px;
+  margin: auto;
+  display: grid;
+  grid-row: 2fr 1fr;
+  grid-gap: 20px;
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.8);
+}
 .graphBox .top {
   position: relative;
   padding: 20px;

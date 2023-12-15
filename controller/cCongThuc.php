@@ -54,9 +54,9 @@
                return true;
             }
         }
-        function capNhatCongThuc($maCongThuc, $tenCongThuc, $moTa, $soLuongNguyenLieu){
+        function capNhatCongThuc($maCongThuc, $tenCongThuc, $donviCT, $moTa,){
             $p = new CongThuc();
-            $res = $p->capNhatCongThuc($maCongThuc, $tenCongThuc, $moTa, $soLuongNguyenLieu);
+            $res = $p->capNhatCongThuc($maCongThuc, $tenCongThuc,  $donviCT, $moTa);
             if (!$res) {
                 return false;
             } else {

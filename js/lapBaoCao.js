@@ -1,7 +1,15 @@
 "use strict";
 import { MAVAITRO, menu, menuShow, highLightMenu } from "./menu.js";
 import { toExcel, toPDF, getFetch } from "./helper.js";
-
+async function kho(loai = 1) {
+  loai = loai == 1 ? "Nguyên liệu" : "Thành phẩm";
+  let data = await getFetch("../ajax/phanPhoiDonNhapKho.php", {
+    action: "layKho",
+    loai: loai,
+    soLuong: 0,
+  });
+  return data;
+}
 async function nguyenLieu() {
   try {
     let data = await getFetch("../ajax/baoCao.php", {
@@ -22,6 +30,8 @@ let uniqueSP;
 let dsUniqueSP;
 let dsNhap;
 let data;
+let dsUniqueSlNhap;
+let SoLuongChoNhap, SoLuongChoXuat;
 let colors = [
   "rgb(255, 99, 132)", // Đỏ
   "rgb(54, 162, 235)", // Xanh dương
@@ -45,7 +55,23 @@ function render() {
   menuShow();
   highLightMenu();
 }
-function content() {
+function content(thongtinkho) {
+  const tongSC = document.querySelector("#tongSC");
+  const tongSLTon = document.querySelector("#tongSLTon");
+  const tongSLChoNhap = document.querySelector("#tongSLChoNhap");
+  const tongSLChoXuat = document.querySelector("#tongSLChoXuat");
+  SoLuongChoNhap = dsUniqueSP.reduce((acc, d) => acc + d.SoLuongChoNhap, 0);
+  SoLuongChoXuat = dsUniqueSP.reduce((acc, d) => acc + d.SoLuongChoXuat, 0);
+  let SoLuongTon = dsUniqueSP.reduce((acc, d) => acc + d.SoLuongTon, 0);
+  console.log(thongtinkho);
+  let SucChua = thongtinkho.reduce(
+    (acc, d) => +acc + (+d.SucChua - +d.SucChuaDaDung),
+    0
+  );
+  tongSC.textContent = `${SucChua} KG`;
+  tongSLTon.textContent = `${SoLuongTon} KG`;
+  tongSLChoNhap.textContent = `${SoLuongChoNhap} KG`;
+  tongSLChoXuat.textContent = `${SoLuongChoXuat} KG`;
   const pieChart = document.querySelector(".pieChart").getContext("2d");
   myPieChart = pieChartVisual(pieChart);
   const pieChart2 = document.querySelector(".pieChart2").getContext("2d");
@@ -53,7 +79,7 @@ function content() {
   const barChart = document.querySelector(".barChart").getContext("2d");
   mybarChart = barChartVisual(barChart);
   const lineChart = document.querySelector(".lineChart").getContext("2d");
-  myLineChart = lineChartVisual(lineChart);
+  myLineChart = barChartSoLuongChoNhap(lineChart);
 }
 
 function barChartVisual(ctx) {
@@ -94,11 +120,12 @@ function barChartVisual(ctx) {
   return myChart;
 }
 function pieChartVisual(ctx) {
+  let newDsUniqueSP = dsUniqueSP.filter((d) => d.SoLuongTon > 0);
   const data = {
-    labels: dsUniqueSP.map((d) => d.TenSanPham),
+    labels: newDsUniqueSP.map((d) => d.TenSanPham),
     datasets: [
       {
-        data: dsUniqueSP.map((d) => d.SoLuongTon), // Dữ liệu biểu thị cho mỗi phần của pie chart
+        data: newDsUniqueSP.map((d) => d.SoLuongTon), // Dữ liệu biểu thị cho mỗi phần của pie chart
         backgroundColor: colors,
         hoverOffset: 4, // Khoảng cách khi hover chuột lên phần tử của biểu đồ
       },
@@ -119,7 +146,7 @@ function pieChartVisual(ctx) {
         },
         title: {
           display: true,
-          text: "Danh sách sản phẩm trong kho",
+          text: "Danh sách sản phẩm với số lượng tồn lớn hơn 0",
         },
       },
     },
@@ -131,9 +158,6 @@ function pieChartVisual(ctx) {
   return myChart;
 }
 function pieChartNhapXuatVisual(ctx) {
-  let SoLuongChoNhap = dsUniqueSP.reduce((acc, d) => acc + d.SoLuongChoNhap, 0);
-  let SoLuongChoXuat = dsUniqueSP.reduce((acc, d) => acc + d.SoLuongChoXuat, 0);
-  console.log(SoLuongChoNhap, SoLuongChoXuat);
   const data = {
     labels: ["Số lường chờ xuất", "Số lượng chờ nhập"],
     datasets: [
@@ -225,11 +249,48 @@ function lineChartVisual(ctx) {
   const myChart = new Chart(ctx, config);
   return myChart;
 }
+function barChartSoLuongChoNhap(ctx) {
+  let top10 = dsUniqueSlNhap.slice(0, 10);
+  const data = {
+    labels: top10.map((d) => d.TenSanPham),
+    datasets: [
+      {
+        data: top10.map((d) => d.SoLuongChoNhap),
+        backgroundColor: colors,
+        hoverOffset: 4,
+      },
+    ],
+  };
 
+  const config = {
+    type: "bar",
+    data: data,
+    options: {
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          display: false,
+          position: "left",
+        },
+        title: {
+          display: true,
+          text: "Top 10 sản phẩm có số lượng chờ nhập lớn nhất (KG)",
+        },
+      },
+    },
+  };
+  if (myLineChart) {
+    myLineChart.destroy();
+  }
+  const myChart = new Chart(ctx, config);
+
+  return myChart;
+}
 async function init(ma = 1) {
   data = ma === 1 ? await nguyenLieu() : await thanhPham();
+  let thongtinkho = await kho(ma);
   if (data) trichXuatData(data);
-  content();
+  content(thongtinkho);
   const select = document.querySelector("select");
   select.addEventListener("change", (e) => {
     changeSelect();
@@ -238,7 +299,7 @@ async function init(ma = 1) {
 
 function trichXuatData(data) {
   uniqueSP = [...new Set(data.map((d) => d.TenSanPham))];
-  dsUniqueSP = uniqueSP.map((uSP) => {
+  let newDsUniqueSP = uniqueSP.map((uSP) => {
     let ds = data.filter((d) => d.TenSanPham === uSP);
     return {
       TenSanPham: uSP,
@@ -247,7 +308,12 @@ function trichXuatData(data) {
       SoLuongChoNhap: ds[0].SoLuongChoNhap,
     };
   });
-  dsUniqueSP = dsUniqueSP.sort((a, b) => b.SoLuongTon - a.SoLuongTon);
+  dsUniqueSP = newDsUniqueSP
+    .slice()
+    .sort((a, b) => b.SoLuongTon - a.SoLuongTon);
+  dsUniqueSlNhap = newDsUniqueSP.sort(
+    (a, b) => b.SoLuongChoNhap - a.SoLuongChoNhap
+  );
   dsNhap = [...new Set(data.map((d) => d.NgayLap))];
   dsNhap = dsNhap.map((nn) => {
     let ds = data.filter((d) => d.NgayLap === nn);

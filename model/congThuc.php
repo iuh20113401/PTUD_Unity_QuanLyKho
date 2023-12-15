@@ -73,21 +73,19 @@ class CongThuc{
             return $stmt->execute([$maCongThuc]);
         }
     }
-    function capNhatCongThuc($maCongThuc, $tenCongThuc, $moTa, $soLuongNguyenLieu){
+    function capNhatCongThuc($maCongThuc, $tenCongThuc, $donviCT, $moTa){
         $p = new KetNoi();
         $p->ketNoi($conn);
         if(!$conn){
             return false;
         } else {
-            $query = "UPDATE congthuc set tenCongThuc = :tenCongThuc, soluongnguyenlieu = :soLuongNguyenLieu, moTa = :moTa WHERE macongthuc = :maCongThuc";
+            $query = "UPDATE congthuc set tenCongThuc = :tenCongThuc, donvi = :donVi, moTa = :moTa WHERE macongthuc = :maCongThuc";
              $stmt = $conn->prepare($query);
             $stmt->bindParam(':maCongThuc', $maCongThuc);
             $stmt->bindParam(':tenCongThuc', $tenCongThuc);
             $stmt->bindParam(':moTa', $moTa);
-            $stmt->bindParam(':soLuongNguyenLieu', $soLuongNguyenLieu);
-            $stmt->execute();
+            $stmt->bindParam(':donVi',$donviCT);
             return $stmt->execute();
-            return $stmt->execute([$maCongThuc]);
         }
     }
     function capNhatChiTietCongThuc($maCongThuc, $maSanPham, $soLuong, $donVi){

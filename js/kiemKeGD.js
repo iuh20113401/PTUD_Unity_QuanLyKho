@@ -121,7 +121,10 @@ async function contentChiTiet(chiTiet) {
   let dsNguyenLieu;
   if (chiTiet.Loai == "Theo sản phẩm") {
     dsNguyenLieu = await laySanPham(chiTiet);
-
+    let uniqueMa = [...new Set(dsNguyenLieu.map((nl) => nl.MaSanPham))];
+    dsNguyenLieu = uniqueMa.map((u) =>
+      dsNguyenLieu.find((nl) => nl.MaSanPham == u)
+    );
     dsNguyenLieu = dsNguyenLieu
       .map((sp) => {
         return `
@@ -149,7 +152,7 @@ async function contentChiTiet(chiTiet) {
           </button>
         </form>
         <div class="content__inner chitiet">
-          <h3>Lập đon kiểm kê</h3>
+          <h3>Biển bản kiểm kê</h3>
           <p><span class="deMuc">Mã đơn:</span>${chiTiet.MaKiemKe}</p>
           <p><span class="deMuc">Người lập:</span>${chiTiet.TenDangNhap}</p>
           <p><span class="deMuc">Ngày lập:</span>${chiTiet.NgayLap}</p>
@@ -276,7 +279,7 @@ async function contentDonLoi(chiTiet) {
           </div>
         </form>
         <div class="content__inner chitiet">
-          <h3>Lập đon kiểm kê</h3>
+          <h3>Biển bản  kiểm kê</h3>
           <p><span class="deMuc">Mã đơn:</span>${chiTiet.MaKiemKe}</p>
           <p><span class="deMuc">Người lập:</span>${chiTiet.TenDangNhap}</p>
           <p><span class="deMuc">Ngày lập:</span>${chiTiet.NgayLap}</p>

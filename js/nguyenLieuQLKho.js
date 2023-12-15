@@ -147,7 +147,7 @@ function renderSua(dsSanPham, id) {
   });
 }
 function contentSua(chiTiet) {
-  let html = `<h3><a href='nguyenLieu.js'>Nguyên liệu</a> > Thêm nguyên liệu</h3>
+  let html = `<h3><a href='nguyenLieu.js'>Nguyên liệu</a> > Sửa nguyên liệu</h3>
         <form class="search">
           <div class="inputGroup">
             <input type="text" name="search" id="search" />
@@ -161,7 +161,7 @@ function contentSua(chiTiet) {
           <button class ="btn secondary">Quay lại</button>
         </form>
         <div class="content__inner chitiet">
-          <h3>Thêm nguyên liệu</h3>
+          <h3>Sửa nguyên liệu</h3>
           <form action="" class="form">
             <div class="inputInfo--flat mt-1">
               <label for="maNL" class="label" >Mã nguyên liệu</label>

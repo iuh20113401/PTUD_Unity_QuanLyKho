@@ -166,7 +166,7 @@ function contentSua(chiTiet) {
           <button class ="btn secondary">Quay lại</button>
         </form>
         <div class="content__inner chitiet">
-          <h3>Thêm thành phẩm</h3>
+          <h3>Sửa thành phẩm</h3>
           <form action="" class="form">
             <div class="inputInfo--flat mt-1">
               <label for="maTP" class="label" >Mã thành phẩm</label>

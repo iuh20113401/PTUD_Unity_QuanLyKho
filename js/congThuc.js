@@ -58,6 +58,17 @@ async function themCT(
   console.log(data);
   return data;
 }
+async function suaCongThuc(maCongThuc, tenCongThuc, donViCT, moTa) {
+  let data = await getFetch("../ajax/congThuc.php", {
+    action: "suaCongThuc",
+    maCongThuc,
+    tenCongThuc,
+    donViCT,
+    moTa,
+  });
+  console.log(data);
+  return data;
+}
 
 let dsCongThuc = (await layCongThuc()) || null;
 async function render(chiTietNguyenLieu = null) {
@@ -131,6 +142,49 @@ async function renderChiTiet(maCongThuc) {
   render(chiTiet);
   const btnBack = document.querySelector("#quayLai");
   btnBack.addEventListener("click", init);
+  const btnSua = document.querySelector("#sua");
+  btnSua.addEventListener("click", (e) => {
+    renderSua(chiTiet);
+  });
+}
+async function renderSua(congThuc) {
+  let html = contentSuaCongThuc(congThuc);
+  html = `${menu()}
+      ${html}
+      `;
+  let container = document.querySelector(".container");
+  container.innerHTML = html;
+  menuShow();
+  highLightMenu();
+  const suaCT = document.querySelector("#suaCT");
+  suaCT.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const maCT = document.querySelector("#maCT");
+    const tenCT = document.querySelector("#tenCT");
+    const donViCT = document.querySelector("#donViCT");
+    const moTa = document.querySelector("#moTa");
+    const check =
+      maCT.value != "" &&
+      donViCT.value != "" &&
+      tenCT.value != "" &&
+      moTa.value != "";
+    if (!check) {
+      thongBaoLoi("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    let res = await suaCongThuc(
+      maCT.value,
+      tenCT.value,
+      donViCT.value,
+      moTa.value
+    );
+    if (res) {
+      await modalThongBao("Đã sửa công thức thành công!", true);
+      window.location.reload();
+    } else {
+      await modalThongBao("Sửa công thức thất bại!", false);
+    }
+  });
 }
 function contentChiTiet(chiTiet) {
   let congThuc = `<table class="small"><tr>
@@ -247,6 +301,90 @@ function contentThemCongThuc(dsNguyenLieu) {
             </div>
           </form>
         </div>`;
+  return html;
+}
+function contentSuaCongThuc(congThuc) {
+  console.log(congThuc);
+  let html = `<div class="content">
+        <h3>Công thức > Thêm công thức</h3>
+        <form class="search">
+          <div class="inputGroup">
+            <input type="text" name="search" id="search" />
+            <button type="button">
+              <i
+                class="fa-solid fa-magnifying-glass"
+                style="color: #1e5cc8"
+              ></i>
+            </button>
+          </div>
+          <button class ="btn secondary">Quay lại</button>
+        </form>
+        <div class="content__inner chitiet">
+          <h3>Thêm công thức</h3>
+          <form action="" class="form">
+            <div class="inputInfo--flat mt-1">
+              <label for="maCT" class="label" >Mã công thức</label>
+              <input type="text" name="maCT" id="maCT" class="inputLarge" readonly value = "${
+                congThuc[0].MaCongThuc
+              }" />
+            </div>
+            <div class="inputInfo--flat mt-1">
+              <label for="tenCT" class="label">Tên công thức</label>
+              <input type="text" name="tenCT" id="tenCT" class="inputLarge"  value = "${
+                congThuc[0].TenCongThuc
+              }"/>
+            </div>
+            <div class="inputInfo--flat mt-1">
+              <label for="donVi" class="label">Đơn vị</label>
+              <input type="text" name="donVi" id="donViCT" class="inputLarge" value ="${
+                congThuc[0].DonViCT
+              } "/>
+            </div>
+            <div class="inputInfo--flat mt-1">
+              <label for="moTa" class="label">Mô tả</label>
+              <textarea
+                name="moTa"
+                id="moTa"
+                cols="90"
+                rows="5"
+                class="textarea"
+                
+              >${congThuc[0].MoTa}</textarea>
+            </div>
+            <div class="dsNguyenLieu mt-1">
+              <label class="mt-1">Danh sách nguyên liệu</label>
+              
+                 ${congThuc
+                   .map((nl) => {
+                     return `
+                     
+                     <div class="row mt-1">
+                     <select name="nguyenLieu" class="nguyenLieu"readonly>
+                 <option value="${nl.MaSanPham}">${nl.TenSanPham}</option>
+                </select>
+                <input
+                  type="number"
+                  placeholder="Nhập số lượng"
+                  id="soLuong"
+                  class="soLuong"
+                  value = ${nl.SoLuong}
+                  readonly
+                />
+                <select name="donVi" id="donVi" class="donVi" readonly>
+                  <option value="g">${nl.DonVi}</option>
+                </select>
+                <button class = 'btn btnXoa btnSuperSmall xoaHang' type ='button'>X</button>
+              </div>
+              `;
+                   })
+                   .join("")}
+                   
+            </div>
+            <div class="buttons center mt-1">
+              <button  id = "suaCT" class="btn primary large center">Sửa công thức</button>
+            </div>
+          </form>
+        </div> </div>`;
   return html;
 }
 function themNL(dsNguyenLieu) {
